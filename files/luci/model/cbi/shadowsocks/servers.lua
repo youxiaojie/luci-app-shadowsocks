@@ -1,4 +1,4 @@
--- Copyright (C) 2016 Jian Chang <aa65535@live.com>
+-- Copyright (C) 2016-2017 Jian Chang <aa65535@live.com>
 -- Licensed to the public under the GNU General Public License v3.
 
 local m, s, o
@@ -42,10 +42,9 @@ function o.cfgvalue(...)
 	return v and v:upper() or "?"
 end
 
-o = s:option(DummyValue, "obfs", translate("Header Obfuscating"))
+o = s:option(DummyValue, "plugin", translate("Plugin"))
 function o.cfgvalue(...)
-	local v = Value.cfgvalue(...)
-	return v and v:upper() or translate("Not enabled")
+	return Value.cfgvalue(...) or translate("None")
 end
 
 return m

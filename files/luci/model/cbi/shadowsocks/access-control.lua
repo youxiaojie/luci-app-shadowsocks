@@ -1,4 +1,4 @@
--- Copyright (C) 2016 Jian Chang <aa65535@live.com>
+-- Copyright (C) 2016-2017 Jian Chang <aa65535@live.com>
 -- Licensed to the public under the GNU General Public License v3.
 
 local m, s, o
@@ -35,6 +35,10 @@ o = s:option(DynamicList, "wan_bp_ips", translate("Bypassed IP"))
 o.datatype = "ip4addr"
 o.rmempty = true
 
+o = s:option(Value, "wan_fw_list", translate("Forwarded IP List"))
+o.datatype = "or(file, '/dev/null')"
+o.rmempty = true
+
 o = s:option(DynamicList, "wan_fw_ips", translate("Forwarded IP"))
 o.datatype = "ip4addr"
 o.rmempty = true
@@ -67,16 +71,16 @@ o:value("SS_SPEC_WAN_FW", translate("Global"))
 o.rmempty = false
 
 o = s:option(ListValue, "self_proxy", translate("Self Proxy"))
-o:value("1", translatef("Normal"))
-o:value("0", translatef("Direct"))
-o:value("2", translatef("Global"))
+o:value("1", translate("Normal"))
+o:value("0", translate("Direct"))
+o:value("2", translate("Global"))
 o.rmempty = false
 
 o = s:option(Value, "ipt_ext", translate("Extra arguments"),
 	translate("Passes additional arguments to iptables. Use with care!"))
 o:value("", translate("None"))
-o:value("--dport 20:1023", translate("Proxy port numbers %s only") %{"20~1023"})
-o:value("-m multiport --dports 53,80,443", translate("Proxy port numbers %s only") %{"53,80,443"})
+o:value("--dport 22:1023", translatef("Proxy port numbers %s only", "22~1023"))
+o:value("-m multiport --dports 53,80,443", translatef("Proxy port numbers %s only", "53,80,443"))
 
 -- [[ LAN Hosts ]]--
 s = m:section(TypedSection, "lan_hosts", translate("LAN Hosts"))
@@ -84,17 +88,17 @@ s.template = "cbi/tblsection"
 s.addremove = true
 s.anonymous = true
 
-o = s:option(Value, "host", translate("Host"))
-luci.sys.net.arptable(function(x)
-	o:value(x["IP address"], "%s (%s)" %{x["IP address"], x["HW address"]})
+o = s:option(Value, "macaddr", translate("MAC-Address"))
+luci.sys.net.mac_hints(function(mac, name)
+	o:value(mac, "%s (%s)" %{mac, name})
 end)
-o.datatype = "ip4addr"
+o.datatype = "macaddr"
 o.rmempty = false
 
 o = s:option(ListValue, "type", translate("Proxy Type"))
-o:value("b", translatef("Direct"))
-o:value("g", translatef("Global"))
-o:value("n", translatef("Normal"))
+o:value("b", translate("Direct"))
+o:value("g", translate("Global"))
+o:value("n", translate("Normal"))
 o.rmempty = false
 
 o = s:option(Flag, "enable", translate("Enable"))
